@@ -1,6 +1,6 @@
-# BGA Claude - Bogey Golf Association
+# Bogey Golf - BGA Scorecards
 
-A web application for golf enthusiasts that displays interactive scorecards with BGA (Bogey Golf Association) scoring, where par+1 is displayed for every hole. The app features course data from around the world with automated scraping capabilities.
+A web application for golf enthusiasts that displays interactive scorecards with BGA (Bogey Golf) scoring, where par+1 is displayed for every hole. The app features course data from around the world with automated scraping capabilities.
 
 ## Features
 
@@ -30,8 +30,8 @@ The app includes championship courses from:
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/BGAClaude.git
-   cd BGAClaude
+   git clone https://github.com/mrtunes/bgagolf.git
+   cd bgagolf
    ```
 
 2. **Open the application**
@@ -80,7 +80,7 @@ Use the provided scripts to add courses manually:
 ## File Structure
 
 ```
-BGAClaude/
+bgagolf/
 ├── index.html              # Main application
 ├── script.js               # JavaScript logic and course data
 ├── all_courses.json        # JSON course database
@@ -99,7 +99,7 @@ BGAClaude/
 
 ## BGA Scoring System
 
-The Bogey Golf Association scoring system displays par+1 for each hole:
+The BGA scoring system displays par+1 for each hole:
 - Par 3 → BGA 4
 - Par 4 → BGA 5  
 - Par 5 → BGA 6
