@@ -985,18 +985,37 @@ function renderScorecard(courseKey) {
     document.getElementById('courseDetails').textContent = `${course.location} • Par ${parTotals.total} • BGA ${bgaTotals.total}`;
     document.getElementById('bgaTotal').textContent = bgaTotals.total;
     
+    // Show/hide nine sections based on game format
+    const frontNineSection = document.querySelector('.front-nine');
+    const backNineSection = document.querySelector('.back-nine');
+    
+    if (gameFormat === 'back9') {
+        frontNineSection.style.display = 'none';
+        backNineSection.style.display = 'block';
+    } else if (gameFormat === 'front9') {
+        frontNineSection.style.display = 'block';
+        backNineSection.style.display = 'none';
+    } else {
+        frontNineSection.style.display = 'block';
+        backNineSection.style.display = 'block';
+    }
+    
     // Create hole cards for front nine (holes 1-9)
     const frontNineContainer = document.getElementById('frontNineHoles');
-    for (let i = 0; i < 9; i++) {
-        const holeCard = createHoleCard(i + 1, course.par[i], bgaScores[i], course.yardage[i]);
-        frontNineContainer.appendChild(holeCard);
+    if (gameFormat !== 'back9') {
+        for (let i = 0; i < 9; i++) {
+            const holeCard = createHoleCard(i + 1, course.par[i], bgaScores[i], course.yardage[i]);
+            frontNineContainer.appendChild(holeCard);
+        }
     }
     
     // Create hole cards for back nine (holes 10-18)
     const backNineContainer = document.getElementById('backNineHoles');
-    for (let i = 9; i < 18; i++) {
-        const holeCard = createHoleCard(i + 1, course.par[i], bgaScores[i], course.yardage[i]);
-        backNineContainer.appendChild(holeCard);
+    if (gameFormat !== 'front9') {
+        for (let i = 9; i < 18; i++) {
+            const holeCard = createHoleCard(i + 1, course.par[i], bgaScores[i], course.yardage[i]);
+            backNineContainer.appendChild(holeCard);
+        }
     }
     
     // Initialize score tracking
@@ -1081,37 +1100,63 @@ function updateHoleScore(holeNumber, bgaPar) {
 
 // Update score summary
 let currentCourse = null;
+let gameFormat = 'full18'; // 'full18', 'front9', 'back9'
 
 function updateScoreSummary() {
     if (!currentCourse) return;
     
     const course = courses[currentCourse];
     const bgaScores = calculateBogeyScores(course.par);
-    const bgaTotal = bgaScores.reduce((sum, score) => sum + score, 0);
     
     let totalScore = 0;
     let holesPlayed = 0;
+    let totalBGA = 0;
+    let expectedHoles = 18;
     
-    for (let i = 1; i <= 18; i++) {
+    // Determine which holes to count based on game format
+    let startHole = 1;
+    let endHole = 18;
+    
+    if (gameFormat === 'front9') {
+        startHole = 1;
+        endHole = 9;
+        expectedHoles = 9;
+    } else if (gameFormat === 'back9') {
+        startHole = 10;
+        endHole = 18;
+        expectedHoles = 9;
+    }
+    
+    for (let i = startHole; i <= endHole; i++) {
         const input = document.getElementById(`score-${i}`);
-        const score = parseInt(input.value);
-        if (score && score > 0) {
-            totalScore += score;
-            holesPlayed++;
+        if (input) {
+            const score = parseInt(input.value);
+            if (score && score > 0) {
+                totalScore += score;
+                holesPlayed++;
+            }
         }
+        totalBGA += bgaScores[i - 1];
     }
     
     document.getElementById('totalScore').textContent = holesPlayed > 0 ? totalScore : '-';
-    document.getElementById('holesPlayed').textContent = `${holesPlayed}/18`;
+    document.getElementById('holesPlayed').textContent = `${holesPlayed}/${expectedHoles}`;
+    document.getElementById('bgaTotal').textContent = totalBGA;
     
-    if (holesPlayed === 18) {
-        const vsBGA = totalScore - bgaTotal;
+    if (holesPlayed === expectedHoles) {
+        const vsBGA = totalScore - totalBGA;
         const vsBGADisplay = vsBGA > 0 ? `+${vsBGA}` : vsBGA.toString();
         document.getElementById('vseBGA').textContent = vsBGADisplay;
     } else if (holesPlayed > 0) {
-        // Show partial comparison
-        const currentBGATotal = bgaScores.slice(0, holesPlayed).reduce((sum, score) => sum + score, 0);
-        const vsBGA = totalScore - currentBGATotal;
+        // Show partial comparison for played holes only
+        let playedBGA = 0;
+        for (let i = startHole; i <= endHole; i++) {
+            const input = document.getElementById(`score-${i}`);
+            if (input && parseInt(input.value) > 0) {
+                playedBGA += bgaScores[i - 1];
+            }
+        }
+        const vsBGA = totalScore - playedBGA;
         const vsBGADisplay = vsBGA > 0 ? `+${vsBGA}` : vsBGA.toString();
         document.getElementById('vseBGA').textContent = vsBGADisplay;
     } else {
@@ -1229,9 +1274,21 @@ function init() {
     // Handle course selection
     courseSelect.addEventListener('change', function() {
         if (this.value) {
-            renderScorecard(this.value);
-        } else {
+            // Show game format selector instead of immediately showing scorecard
+            document.getElementById('gameFormatSelector').style.display = 'block';
             document.getElementById('courseDisplay').style.display = 'none';
+            currentCourse = this.value;
+        } else {
+            document.getElementById('gameFormatSelector').style.display = 'none';
+            document.getElementById('courseDisplay').style.display = 'none';
+        }
+    });
+    
+    // Handle start round button
+    document.getElementById('startRound').addEventListener('click', function() {
+        if (currentCourse) {
+            gameFormat = document.getElementById('gameFormat').value;
+            renderScorecard(currentCourse);
         }
     });
     
@@ -1594,9 +1651,106 @@ function loadUserCourses() {
     });
 }
 
+// CSV Export functionality
+function exportScorecard() {
+    if (!currentCourse) {
+        alert('Please select a course first');
+        return;
+    }
+    
+    const course = courses[currentCourse];
+    const bgaScores = calculateBogeyScores(course.par);
+    const currentDate = new Date().toLocaleDateString();
+    
+    // Determine which holes to export based on game format
+    let startHole = 1;
+    let endHole = 18;
+    let formatName = 'Full 18 Holes';
+    
+    if (gameFormat === 'front9') {
+        startHole = 1;
+        endHole = 9;
+        formatName = 'Front 9';
+    } else if (gameFormat === 'back9') {
+        startHole = 10;
+        endHole = 18;
+        formatName = 'Back 9';
+    }
+    
+    // Create CSV content
+    let csvContent = '';
+    
+    // Header information
+    csvContent += `BGA Golf Scorecard\n`;
+    csvContent += `Course:,${course.name}\n`;
+    csvContent += `Location:,${course.location}\n`;
+    csvContent += `Date:,${currentDate}\n`;
+    csvContent += `Format:,${formatName}\n`;
+    csvContent += `\n`;
+    
+    // Column headers
+    csvContent += `Hole,Par,BGA Par,Yardage,Your Score,vs BGA\n`;
+    
+    // Hole data
+    let totalScore = 0;
+    let totalBGA = 0;
+    let holesWithScores = 0;
+    
+    for (let i = startHole; i <= endHole; i++) {
+        const par = course.par[i - 1];
+        const bgaPar = bgaScores[i - 1];
+        const yardage = course.yardage[i - 1];
+        const scoreInput = document.getElementById(`score-${i}`);
+        const score = scoreInput ? parseInt(scoreInput.value) || '' : '';
+        
+        let vsBGA = '';
+        if (score !== '') {
+            const diff = score - bgaPar;
+            vsBGA = diff > 0 ? `+${diff}` : diff.toString();
+            totalScore += score;
+            holesWithScores++;
+        }
+        
+        totalBGA += bgaPar;
+        
+        csvContent += `${i},${par},${bgaPar},${yardage},${score},${vsBGA}\n`;
+    }
+    
+    // Summary
+    csvContent += `\n`;
+    csvContent += `Summary\n`;
+    csvContent += `Holes Played:,${holesWithScores}\n`;
+    csvContent += `Total Score:,${totalScore || '-'}\n`;
+    csvContent += `Total BGA:,${totalBGA}\n`;
+    if (totalScore > 0) {
+        const totalVsBGA = totalScore - totalBGA;
+        csvContent += `vs BGA:,${totalVsBGA > 0 ? '+' + totalVsBGA : totalVsBGA}\n`;
+    }
+    
+    // Download the CSV file
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    
+    // Generate filename
+    const courseName = course.name.replace(/[^a-z0-9]/gi, '_').toLowerCase();
+    const filename = `BGA_${courseName}_${formatName.replace(' ', '_')}_${currentDate.replace(/\//g, '-')}.csv`;
+    link.setAttribute('download', filename);
+    
+    // Trigger download
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
 // Start the application
 document.addEventListener('DOMContentLoaded', () => {
     loadUserCourses();
     init();
     initImageUpload();
+    
+    // Add CSV export button event listener
+    document.getElementById('exportCsvBtn').addEventListener('click', exportScorecard);
 });
