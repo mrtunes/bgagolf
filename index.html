@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bogey Golf Association - BGA Scorecards</title>
+    <meta name="description" content="Interactive golf scorecards with BGA scoring system. Track your scores against par+1 for a more achievable golf experience.">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⛳</text></svg>">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: Arial, sans-serif; background: #f5f5f5; padding: 10px; }
+        .container { max-width: 100%; margin: 0 auto; background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #2c5530; margin-bottom: 20px; font-size: 24px; }
+        .tagline { text-align: center; color: #666; margin-bottom: 20px; font-size: 14px; }
+        .course-selector { margin-bottom: 20px; text-align: center; }
+        select { padding: 8px; font-size: 14px; border: 1px solid #ddd; border-radius: 4px; margin-right: 10px; }
+        
+        /* Modern Card-based Scorecard */
+        .scorecard-container { margin: 20px 0; }
+        .scorecard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .scorecard-summary { background: #2c5530; color: white; padding: 15px; border-radius: 8px; text-align: center; }
+        .summary-stat { margin: 5px 15px; }
+        .summary-label { font-size: 12px; opacity: 0.8; }
+        .summary-value { font-size: 18px; font-weight: bold; }
+        
+        .holes-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px; }
+        .hole-card { background: white; border: 2px solid #e0e0e0; border-radius: 12px; padding: 15px; transition: all 0.3s ease; position: relative; }
+        .hole-card:hover { border-color: #2c5530; box-shadow: 0 4px 12px rgba(44, 85, 48, 0.1); }
+        .hole-card.under-bga { border-color: #4caf50; background: linear-gradient(135deg, #f8fff8 0%, #e8f5e9 100%); }
+        .hole-card.over-bga { border-color: #f44336; background: linear-gradient(135deg, #fff8f8 0%, #ffeaea 100%); }
+        .hole-card.at-bga { border-color: #2196f3; background: linear-gradient(135deg, #f8fafe 0%, #e3f2fd 100%); }
+        
+        .hole-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .hole-number { font-size: 18px; font-weight: bold; color: #2c5530; }
+        .hole-yardage { font-size: 12px; color: #666; }
+        
+        .bga-par { text-align: center; margin-bottom: 15px; }
+        .bga-par-label { font-size: 12px; color: #666; margin-bottom: 5px; }
+        .bga-par-value { font-size: 24px; font-weight: bold; color: #2c5530; }
+        
+        .score-input-container { text-align: center; }
+        .score-input { width: 60px; height: 60px; border: 2px solid #ddd; border-radius: 50%; text-align: center; font-size: 18px; font-weight: bold; background: white; }
+        .score-input:focus { outline: none; border-color: #2c5530; }
+        .score-input.under { border-color: #4caf50; color: #4caf50; }
+        .score-input.over { border-color: #f44336; color: #f44336; }
+        .score-input.at { border-color: #2196f3; color: #2196f3; }
+        
+        .performance-indicator { position: absolute; top: 10px; right: 10px; width: 20px; height: 20px; border-radius: 50%; display: none; }
+        .performance-indicator.under { background: #4caf50; display: block; }
+        .performance-indicator.over { background: #f44336; display: block; }
+        .performance-indicator.at { background: #2196f3; display: block; }
+        
+        .course-info { margin-bottom: 20px; text-align: center; }
+        .course-name { font-size: 20px; color: #2c5530; margin-bottom: 8px; }
+        .course-details { color: #666; font-size: 14px; }
+        
+        .front-nine, .back-nine { margin-bottom: 30px; }
+        .nine-header { text-align: center; margin-bottom: 15px; padding: 10px; background: #f5f5f5; border-radius: 8px; }
+        .nine-title { font-size: 16px; font-weight: bold; color: #2c5530; }
+        
+        .clear-scores-btn { background: #f44336; color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; margin-left: 10px; }
+        .clear-scores-btn:hover { background: #d32f2f; }
+        
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            body { padding: 5px; }
+            .container { padding: 10px; }
+            h1 { font-size: 20px; margin-bottom: 15px; }
+            .tagline { font-size: 12px; }
+            .course-name { font-size: 18px; }
+            .course-details { font-size: 12px; }
+            .holes-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+            .hole-card { padding: 12px; }
+            .scorecard-summary { padding: 10px; flex-wrap: wrap; }
+            .summary-stat { margin: 5px 8px; }
+            .summary-value { font-size: 16px; }
+            .summary-label { font-size: 10px; }
+            select { font-size: 12px; padding: 6px; }
+            #addCourseBtn { font-size: 12px; padding: 6px 12px; }
+        }
+        
+        @media (max-width: 480px) {
+            .holes-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px; }
+            .hole-card { padding: 10px; }
+            .hole-number { font-size: 16px; }
+            .bga-par-value { font-size: 20px; }
+            .score-input { width: 50px; height: 50px; font-size: 16px; }
+        }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Bogey Golf Association</h1>
+        <p class="tagline">Scorecards with an extra stroke added to every hole</p>
+        
+        <div class="course-selector">
+            <div style="margin-bottom: 15px;">
+                <label for="countrySelect">Filter by Country: </label>
+                <select id="countrySelect" style="margin-right: 20px;">
+                    <option value="">All Countries</option>
+                </select>
+                <label for="courseSelect">Select Course: </label>
+                <select id="courseSelect">
+                    <option value="">Choose a course...</option>
+                </select>
+            </div>
+            <div style="text-align: center; display: none;">
+                <button id="addCourseBtn" style="padding: 10px 20px; background: #2c5530; color: white; border: none; border-radius: 4px; cursor: pointer;">Add New Course</button>
+            </div>
+        </div>
+        
+        <!-- Add Course Modal -->
+        <div id="addCourseModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000;">
+            <div style="background: white; margin: 5% auto; padding: 30px; width: 80%; max-width: 800px; border-radius: 8px; max-height: 90vh; overflow-y: auto;">
+                <h2 style="margin-bottom: 20px; color: #2c5530;">Add New Golf Course</h2>
+                <p style="margin-bottom: 20px; color: #666;">Upload a scorecard photo and we'll extract the course information automatically.</p>
+                
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; margin-bottom: 10px; font-weight: bold;">Upload Scorecard Photo:</label>
+                    <input type="file" id="scorecardPhoto" accept="image/*" style="padding: 10px; width: 100%; border: 2px dashed #ccc; border-radius: 4px;">
+                    <div id="imagePreview" style="margin-top: 10px; text-align: center;"></div>
+                </div>
+                
+                <div id="ocrProgress" style="display: none; margin-bottom: 20px;">
+                    <div style="background: #f0f0f0; border-radius: 4px; padding: 10px; text-align: center;">
+                        <div style="color: #666;">Processing image...</div>
+                        <div style="background: #2c5530; height: 4px; border-radius: 2px; margin-top: 10px; animation: pulse 2s infinite;"></div>
+                    </div>
+                </div>
+                
+                <div id="courseForm" style="display: none;">
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: bold;">Course Name:</label>
+                        <input type="text" id="courseName" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                    </div>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: bold;">Location:</label>
+                        <input type="text" id="courseLocation" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                    </div>
+                    
+                    <div style="margin-bottom: 15px;">
+                        <label style="display: block; margin-bottom: 10px; font-weight: bold;">Hole Data:</label>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(80px, 1fr)); gap: 10px; margin-bottom: 10px;">
+                            <div style="font-weight: bold; text-align: center; padding: 5px; background: #f5f5f5;">Hole</div>
+                            <div style="font-weight: bold; text-align: center; padding: 5px; background: #f5f5f5;">Par</div>
+                            <div style="font-weight: bold; text-align: center; padding: 5px; background: #f5f5f5;">Yardage</div>
+                        </div>
+                        <div id="holeInputs"></div>
+                    </div>
+                    
+                    <div style="text-align: center;">
+                        <button id="saveCourse" style="padding: 12px 30px; background: #2c5530; color: white; border: none; border-radius: 4px; cursor: pointer; margin-right: 10px;">Save Course</button>
+                        <button id="cancelAdd" style="padding: 12px 30px; background: #ccc; color: #666; border: none; border-radius: 4px; cursor: pointer;">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="courseDisplay" style="display: none;">
+            <div class="course-info">
+                <div class="course-name" id="courseName"></div>
+                <div class="course-details" id="courseDetails"></div>
+            </div>
+            
+            <div class="scorecard-container">
+                <div class="scorecard-header">
+                    <div class="scorecard-summary" id="scoreSummary">
+                        <div style="display: flex; justify-content: space-around;">
+                            <div class="summary-stat">
+                                <div class="summary-label">Total Strokes</div>
+                                <div class="summary-value" id="totalScore">-</div>
+                            </div>
+                            <div class="summary-stat">
+                                <div class="summary-label">vs BGA</div>
+                                <div class="summary-value" id="vseBGA">-</div>
+                            </div>
+                            <div class="summary-stat">
+                                <div class="summary-label">BGA Total</div>
+                                <div class="summary-value" id="bgaTotal">-</div>
+                            </div>
+                            <div class="summary-stat">
+                                <div class="summary-label">Holes Played</div>
+                                <div class="summary-value" id="holesPlayed">0/18</div>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="clear-scores-btn" onclick="clearAllScores()">Clear Scores</button>
+                </div>
+                
+                <div class="front-nine">
+                    <div class="nine-header">
+                        <div class="nine-title">Front Nine</div>
+                    </div>
+                    <div class="holes-grid" id="frontNineHoles"></div>
+                </div>
+                
+                <div class="back-nine">
+                    <div class="nine-header">
+                        <div class="nine-title">Back Nine</div>
+                    </div>
+                    <div class="holes-grid" id="backNineHoles"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
