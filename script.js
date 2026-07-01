@@ -953,6 +953,55 @@ const courses = {
         "source": "golfify.io",
         "url": "https://www.golfify.io/courses/station-creek-golf-club-south",
         "course_type": "Championship Course"
+    },
+    "upper_unionville_golf_club": {
+        "name": "Upper Unionville Golf Club",
+        "location": "Markham, ON, Canada",
+        "par": [
+            5,
+            4,
+            3,
+            4,
+            5,
+            3,
+            4,
+            3,
+            4,
+            5,
+            4,
+            4,
+            4,
+            3,
+            4,
+            3,
+            4,
+            5
+        ],
+        "yardage": [
+            553,
+            360,
+            194,
+            417,
+            522,
+            169,
+            419,
+            150,
+            368,
+            532,
+            379,
+            455,
+            353,
+            164,
+            400,
+            155,
+            423,
+            526
+        ],
+        "tee_info": "Black Tees",
+        "source": "upperunionvillegolf.com official scorecard",
+        "url": "https://www.upperunionvillegolf.com/wp-content/uploads/2017/07/scorecard.pdf",
+        "course_type": "Championship Course",
+        "note": "Official scorecard lists hole 12 as 4/5; using par 4 for the men's black tee total of par 71"
     }
 };;;;;;;;;;;
 
