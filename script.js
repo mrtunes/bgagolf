@@ -1242,6 +1242,22 @@ const courses = {
         "source": "golfpass.com",
         "url": "https://www.golfpass.com/travel-advisor/courses/27106-tpc-toronto-at-osprey-valley-heathlands-course",
         "course_type": "Championship Course"
+    },
+    "muskoka_bay_club": {
+        "name": "Muskoka Bay Club",
+        "location": "Gravenhurst, ON, Canada",
+        "par": [
+            4, 3, 4, 4, 5, 3, 4, 5, 4,
+            4, 3, 5, 4, 5, 4, 4, 3, 4
+        ],
+        "yardage": [
+            441, 215, 424, 349, 547, 222, 442, 524, 423,
+            446, 180, 569, 413, 588, 452, 457, 214, 461
+        ],
+        "tee_info": "Black Tees",
+        "source": "golfpass.com",
+        "url": "https://www.golfpass.com/travel-advisor/courses/27416-muskoka-bay-club",
+        "course_type": "Resort Course"
     }
 };;;;;;;;;;;
 
