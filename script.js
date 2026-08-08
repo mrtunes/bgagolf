@@ -665,7 +665,7 @@ const courses = {
     },
     "tpc_toronto_osprey_valley_north": {
         "name": "TPC Toronto at Osprey Valley - North",
-        "location": "Toronto, ON, Canada",
+        "location": "Caledon, ON, Canada",
         "par": [
             5,
             4,
