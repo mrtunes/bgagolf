@@ -55,47 +55,61 @@ Each course contains:
 
 ## Adding New Courses
 
-### Automated Scraping
-The project includes Python scrapers for:
-- Golf Course API
-- BlueGolf.com courses
-- Manual data extraction tools
+All course data lives in the `courses` object at the top of `script.js`. To add a new course:
 
-### Running Scrapers
-```bash
-# Install dependencies
-pip install -r requirements.txt
+### 1. Find the scorecard
 
-# Run specific scrapers
-python scraper.py
-python bluegolf_scraper_v2.py
+Search for the course scorecard online. Good sources:
+- **GolfPass** (golfpass.com) — most reliable for hole-by-hole data
+- **BlueGolf** (course.bluegolf.com) — detailed scorecards, but may block automated fetching
+- **Course website** — often has a PDF scorecard
+
+You need 18 par values and 18 yardage values for a single tee set (typically the championship tees).
+
+### 2. Add the entry to `script.js`
+
+Add a new entry to the `courses` object at the bottom of the list, before the closing `}`. Follow this format:
+
+```javascript
+"course_key": {
+    "name": "Course Name",
+    "location": "City, Province/State, Country",
+    "par": [4, 3, 5, ...],       // 18 values
+    "yardage": [420, 180, 530, ...], // 18 values
+    "tee_info": "Gold Tees",
+    "source": "golfpass.com",
+    "url": "https://source-url",
+    "course_type": "Championship Course"
+}
 ```
 
-### Manual Course Addition
-Use the provided scripts to add courses manually:
-- `add_oakdale.py` - Example course addition
-- `add_humber_valley.py` - BlueGolf course addition
-- `manual_courses.py` - General manual addition
+### 3. Verify the data
+
+- Par array has exactly 18 values (each 3, 4, or 5)
+- Yardage array has exactly 18 values
+- Total par matches the course (usually 70-72)
+- Total yardage is reasonable (5,500-7,500)
 
 ## File Structure
 
 ```
 bgagolf/
 ├── index.html              # Main application
-├── script.js               # JavaScript logic and course data
-├── all_courses.json        # JSON course database
-├── scraper.py             # Golf Course API scraper
-├── bluegolf_scraper_v2.py # BlueGolf.com scraper
-├── requirements.txt       # Python dependencies
-├── add_*.py              # Course addition scripts
-└── scorecard-scrapes/    # Saved HTML pages
+├── script.js               # JavaScript logic and ALL course data
+├── all_courses.json        # Legacy JSON export (not used by the app)
+├── scorecard-scrapes/      # Saved HTML pages from course websites
+├── scraper.py              # Golf Course API scraper (legacy)
+├── bluegolf_scraper_v2.py  # BlueGolf.com scraper (legacy)
+├── add_*.py                # One-off course addition scripts (legacy)
+└── requirements.txt        # Python dependencies (for legacy scrapers)
 ```
 
 ## Course Data Sources
 
-- **Golf Course API**: Professional course data
-- **BlueGolf.com**: Detailed scorecards for Canadian courses
-- **Manual Research**: Verified course information from official sources
+- **GolfPass** (golfpass.com) — hole-by-hole scorecards, most reliable
+- **BlueGolf** (course.bluegolf.com) — detailed scorecards for many courses
+- **Course websites** — official PDF scorecards
+- **Manual research** — verified from official sources
 
 ## BGA Scoring System
 

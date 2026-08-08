@@ -1002,6 +1002,54 @@ const courses = {
         "url": "https://www.upperunionvillegolf.com/wp-content/uploads/2017/07/scorecard.pdf",
         "course_type": "Championship Course",
         "note": "Official scorecard lists hole 12 as 4/5; using par 4 for the men's black tee total of par 71"
+    },
+    "diamondback_golf_club": {
+        "name": "DiamondBack Golf Club",
+        "location": "Richmond Hill, ON, Canada",
+        "par": [
+            5,
+            4,
+            3,
+            4,
+            5,
+            4,
+            4,
+            4,
+            3,
+            4,
+            5,
+            3,
+            4,
+            4,
+            3,
+            4,
+            4,
+            5
+        ],
+        "yardage": [
+            502,
+            417,
+            208,
+            394,
+            517,
+            457,
+            434,
+            363,
+            208,
+            439,
+            545,
+            175,
+            420,
+            393,
+            189,
+            390,
+            459,
+            569
+        ],
+        "tee_info": "Gold Tees",
+        "source": "golfpass.com",
+        "url": "https://www.golfpass.com/travel-advisor/courses/27807-diamondback-golf-club",
+        "course_type": "Championship Course"
     }
 };;;;;;;;;;;
 
