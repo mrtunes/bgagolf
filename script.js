@@ -1146,6 +1146,102 @@ const courses = {
         "source": "golfpass.com",
         "url": "https://www.golfpass.com/travel-advisor/courses/27830-dentonia-park-golf-course",
         "course_type": "Executive Par-3 Course"
+    },
+    "lionhead_masters": {
+        "name": "Lionhead Golf & Country Club - Masters",
+        "location": "Brampton, ON, Canada",
+        "par": [
+            5, 4, 3, 4, 4, 5, 4, 3, 4,
+            5, 3, 4, 4, 4, 4, 5, 3, 4
+        ],
+        "yardage": [
+            515, 399, 166, 465, 437, 558, 408, 176, 435,
+            539, 189, 430, 423, 421, 377, 575, 218, 443
+        ],
+        "tee_info": "Black Tees",
+        "source": "golfpass.com",
+        "url": "https://www.golfpass.com/travel-advisor/courses/27202-lionhead-golf-and-country-club-masters",
+        "course_type": "Championship Course"
+    },
+    "lionhead_legends": {
+        "name": "Lionhead Golf & Country Club - Legends",
+        "location": "Brampton, ON, Canada",
+        "par": [
+            4, 4, 3, 5, 4, 4, 5, 3, 4,
+            4, 4, 5, 3, 4, 5, 4, 3, 4
+        ],
+        "yardage": [
+            441, 397, 177, 535, 416, 385, 557, 190, 415,
+            378, 428, 542, 141, 412, 481, 431, 165, 443
+        ],
+        "tee_info": "Gold Tees",
+        "source": "18birdies.com",
+        "url": "https://18birdies.com/golf-courses/club/76becc30-86ac-11e4-8c28-020000005b00/lionhead-golf-and-country-club",
+        "course_type": "Championship Course"
+    },
+    "eagles_nest_golf_club": {
+        "name": "Eagles Nest Golf Club",
+        "location": "Maple, ON, Canada",
+        "par": [
+            5, 4, 4, 4, 3, 4, 4, 3, 5,
+            4, 4, 4, 3, 4, 3, 5, 5, 4
+        ],
+        "yardage": [
+            565, 441, 450, 400, 191, 359, 435, 164, 582,
+            438, 439, 470, 190, 425, 242, 559, 642, 484
+        ],
+        "tee_info": "Eagle Tees",
+        "source": "golfpass.com",
+        "url": "https://www.golfpass.com/travel-advisor/courses/27578-eagles-nest-golf-club",
+        "course_type": "Championship Course"
+    },
+    "taboo_muskoka": {
+        "name": "Taboo Muskoka Resort",
+        "location": "Gravenhurst, ON, Canada",
+        "par": [
+            4, 4, 3, 5, 4, 4, 3, 5, 4,
+            4, 3, 4, 4, 4, 3, 4, 4, 5
+        ],
+        "yardage": [
+            421, 463, 204, 553, 430, 443, 218, 550, 449,
+            460, 206, 421, 402, 444, 193, 484, 436, 563
+        ],
+        "tee_info": "Black Tees",
+        "source": "golfpass.com",
+        "url": "https://www.golfpass.com/travel-advisor/courses/27417-taboo-resort-golf-spa",
+        "course_type": "Resort Course"
+    },
+    "angus_glen_south": {
+        "name": "Angus Glen Golf Club - South",
+        "location": "Markham, ON, Canada",
+        "par": [
+            4, 3, 4, 4, 4, 3, 5, 4, 5,
+            4, 4, 3, 4, 5, 4, 5, 3, 4
+        ],
+        "yardage": [
+            442, 153, 375, 419, 370, 168, 455, 375, 505,
+            388, 401, 189, 391, 527, 391, 485, 157, 416
+        ],
+        "tee_info": "Blue Tees",
+        "source": "golfpass.com",
+        "url": "https://www.golfpass.com/travel-advisor/courses/27584-angus-glen-golf-club-south",
+        "course_type": "Championship Course"
+    },
+    "tpc_toronto_osprey_valley_heathlands": {
+        "name": "TPC Toronto at Osprey Valley - Heathlands",
+        "location": "Caledon, ON, Canada",
+        "par": [
+            5, 4, 4, 4, 3, 4, 4, 3, 5,
+            5, 4, 3, 4, 4, 3, 5, 3, 4
+        ],
+        "yardage": [
+            514, 384, 406, 366, 199, 443, 421, 147, 560,
+            515, 408, 188, 450, 410, 178, 550, 178, 440
+        ],
+        "tee_info": "Black Tees",
+        "source": "golfpass.com",
+        "url": "https://www.golfpass.com/travel-advisor/courses/27106-tpc-toronto-at-osprey-valley-heathlands-course",
+        "course_type": "Championship Course"
     }
 };;;;;;;;;;;
 
