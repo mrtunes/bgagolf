@@ -1354,6 +1354,54 @@ const courses = {
         "source": "golfpass.com",
         "url": "https://www.golfpass.com/travel-advisor/courses/27614-greystone-golf-club",
         "course_type": "Championship Course"
+    },
+    "woodington_lake_legend": {
+        "name": "Woodington Lake Golf Club - Legend",
+        "location": "Tottenham, ON, Canada",
+        "par": [
+            4, 3, 5, 4, 4, 4, 3, 4, 4,
+            5, 4, 4, 3, 4, 5, 3, 5, 4
+        ],
+        "yardage": [
+            416, 200, 570, 438, 388, 455, 136, 444, 433,
+            541, 482, 455, 195, 478, 555, 179, 544, 410
+        ],
+        "tee_info": "Gold Tees",
+        "source": "golfpass.com",
+        "url": "https://www.golfpass.com/travel-advisor/courses/27941-woodington-lake-golf-club-legend-course",
+        "course_type": "Championship Course"
+    },
+    "woodington_lake_legacy": {
+        "name": "Woodington Lake Golf Club - Legacy",
+        "location": "Tottenham, ON, Canada",
+        "par": [
+            4, 5, 4, 5, 3, 4, 5, 4, 4,
+            3, 4, 3, 5, 4, 3, 4, 4, 4
+        ],
+        "yardage": [
+            410, 524, 486, 597, 180, 417, 580, 463, 430,
+            257, 477, 182, 534, 407, 217, 313, 415, 413
+        ],
+        "tee_info": "Gold Tees",
+        "source": "golfpass.com",
+        "url": "https://www.golfpass.com/travel-advisor/courses/27942-woodington-lake-golf-club-legacy-course",
+        "course_type": "Championship Course"
+    },
+    "rolling_hills_challenge": {
+        "name": "Rolling Hills Golf Club - Challenge",
+        "location": "Stouffville, ON, Canada",
+        "par": [
+            4, 3, 4, 5, 3, 5, 4, 4, 3,
+            4, 3, 4, 5, 3, 5, 4, 4, 3
+        ],
+        "yardage": [
+            308, 124, 344, 448, 94, 440, 258, 260, 115,
+            306, 164, 299, 450, 136, 461, 228, 318, 131
+        ],
+        "tee_info": "White Tees",
+        "source": "golfpass.com",
+        "url": "https://www.golfpass.com/travel-advisor/courses/27884-rolling-hills-golf-club-challenge",
+        "course_type": "Championship Course"
     }
 };;;;;;;;;;;
 
@@ -1838,8 +1886,22 @@ function init() {
     populateCourseDropdown();
     
     // Handle country filter
+    const regionSelect = document.getElementById('regionSelect');
     countrySelect.addEventListener('change', function() {
-        filterCoursesByCountry(this.value);
+        const country = this.value;
+        if (country === 'Canada') {
+            regionSelect.style.display = 'inline-block';
+            populateRegionDropdown();
+        } else {
+            regionSelect.style.display = 'none';
+            regionSelect.value = '';
+        }
+        filterCoursesByCountry(country);
+    });
+
+    // Handle region filter
+    regionSelect.addEventListener('change', function() {
+        filterCoursesByCountry(countrySelect.value, this.value);
     });
     
     // Handle course selection
@@ -1878,6 +1940,25 @@ function init() {
         syncCounterFromScorecard();
         switchView('counter');
     }
+}
+
+// GTA cities for region filtering
+const GTA_CITIES = [
+    'Toronto', 'Scarborough', 'Etobicoke', 'North York',
+    'Mississauga', 'Brampton', 'Vaughan', 'Maple',
+    'Richmond Hill', 'Markham', 'Pickering', 'Ajax',
+    'Whitby', 'Oshawa', 'Oakville', 'Burlington',
+    'Milton', 'Halton Hills', 'King City',
+    'Stouffville', 'Aurora', 'Newmarket',
+    'Caledon', 'Bolton', 'Kleinburg',
+    'Uxbridge', 'Tottenham'
+];
+
+function extractRegion(location) {
+    const city = location.split(',')[0].trim();
+    if (GTA_CITIES.includes(city)) return 'GTA';
+    if (location.includes('ON,') || location.includes('Ontario')) return 'Ontario';
+    return null;
 }
 
 // Extract country from location string
@@ -1970,30 +2051,57 @@ function populateCourseDropdown(filteredCourses = null) {
     }
 }
 
-// Filter courses by country
-function filterCoursesByCountry(selectedCountry) {
+// Populate region dropdown (for Canada)
+function populateRegionDropdown() {
+    const regionSelect = document.getElementById('regionSelect');
+    // Reset
+    regionSelect.innerHTML = '<option value="">All Regions</option>';
+    const regions = new Set();
+    Object.values(courses).forEach(course => {
+        if (extractCountry(course.location) === 'Canada') {
+            const region = extractRegion(course.location);
+            if (region) regions.add(region);
+        }
+    });
+    Array.from(regions).sort().forEach(region => {
+        const option = document.createElement('option');
+        option.value = region;
+        option.textContent = region;
+        regionSelect.appendChild(option);
+    });
+}
+
+// Filter courses by country and optional region
+function filterCoursesByCountry(selectedCountry, selectedRegion) {
     const courseSelect = document.getElementById('courseSelect');
-    
+
     // Hide current course display
     document.getElementById('courseDisplay').style.display = 'none';
-    
+
     if (!selectedCountry) {
         // Show all courses
         populateCourseDropdown();
         return;
     }
-    
-    // Filter courses by selected country
+
+    // Filter courses by selected country and region
     const filteredCourses = {};
     Object.keys(courses).forEach(courseKey => {
         const course = courses[courseKey];
         const courseCountry = extractCountry(course.location);
-        
+
         if (courseCountry === selectedCountry) {
-            filteredCourses[courseKey] = course;
+            if (selectedRegion) {
+                const courseRegion = extractRegion(course.location);
+                if (courseRegion === selectedRegion) {
+                    filteredCourses[courseKey] = course;
+                }
+            } else {
+                filteredCourses[courseKey] = course;
+            }
         }
     });
-    
+
     // Update course dropdown with filtered courses
     populateCourseDropdown(filteredCourses);
 }
