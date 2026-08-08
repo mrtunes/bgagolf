@@ -91,6 +91,162 @@
             50% { opacity: 0.5; }
             100% { opacity: 1; }
         }
+
+        /* View Toggle */
+        .view-toggle {
+            display: flex;
+            justify-content: center;
+            gap: 0;
+            margin-bottom: 20px;
+        }
+        .view-toggle button {
+            padding: 10px 24px;
+            border: 2px solid #2c5530;
+            background: white;
+            color: #2c5530;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .view-toggle button:first-child { border-radius: 6px 0 0 6px; }
+        .view-toggle button:last-child { border-radius: 0 6px 6px 0; }
+        .view-toggle button.active {
+            background: #2c5530;
+            color: white;
+        }
+
+        /* Counter View */
+        .counter-view {
+            display: none;
+            text-align: center;
+            max-width: 400px;
+            margin: 0 auto;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        .counter-hole-label {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 4px;
+        }
+        .counter-hole-number {
+            font-size: 48px;
+            font-weight: bold;
+            color: #2c5530;
+            line-height: 1;
+            margin-bottom: 12px;
+        }
+        .counter-bga-par {
+            font-size: 14px;
+            color: #888;
+            margin-bottom: 6px;
+        }
+        .counter-bga-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: #2c5530;
+        }
+        .counter-strokes {
+            margin: 30px 0;
+        }
+        .counter-strokes-label {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+        .counter-strokes-value {
+            font-size: 96px;
+            font-weight: bold;
+            color: #333;
+            line-height: 1;
+        }
+        .counter-strokes-value.under { color: #4caf50; }
+        .counter-strokes-value.at { color: #2196f3; }
+        .counter-strokes-value.over { color: #f44336; }
+        .counter-vs-bga {
+            font-size: 18px;
+            color: #888;
+            margin-top: 4px;
+            min-height: 24px;
+        }
+        .counter-buttons {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
+            margin: 20px 0 30px;
+        }
+        .counter-btn {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 3px solid #2c5530;
+            background: white;
+            color: #2c5530;
+            font-size: 36px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.15s, color 0.15s;
+        }
+        .counter-btn:active {
+            background: #2c5530;
+            color: white;
+        }
+        .counter-btn.minus { font-size: 40px; }
+        .counter-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .counter-nav-btn {
+            padding: 12px 24px;
+            border: 2px solid #ddd;
+            background: white;
+            color: #333;
+            font-size: 16px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .counter-nav-btn:active { background: #f0f0f0; }
+        .counter-nav-btn:disabled { opacity: 0.3; cursor: default; }
+        .counter-dots {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            flex-wrap: wrap;
+            max-width: 200px;
+        }
+        .counter-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #ddd;
+        }
+        .counter-dot.current { background: #2c5530; }
+        .counter-dot.played { background: #aaa; }
+        .counter-summary {
+            background: #2c5530;
+            color: white;
+            padding: 12px 16px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-around;
+        }
+        .counter-summary-stat { text-align: center; }
+        .counter-summary-label { font-size: 11px; opacity: 0.8; }
+        .counter-summary-value { font-size: 18px; font-weight: bold; }
+
+        @media (max-width: 480px) {
+            .counter-hole-number { font-size: 40px; }
+            .counter-strokes-value { font-size: 80px; }
+            .counter-btn { width: 70px; height: 70px; font-size: 32px; }
+            .counter-buttons { gap: 30px; }
+        }
     </style>
 </head>
 <body>
@@ -176,8 +332,49 @@
                 <div class="course-name" id="courseName"></div>
                 <div class="course-details" id="courseDetails"></div>
             </div>
-            
-            <div class="scorecard-container">
+
+            <div class="view-toggle" id="viewToggle">
+                <button id="counterViewBtn" class="active" onclick="switchView('counter')">Counter</button>
+                <button id="scorecardViewBtn" onclick="switchView('scorecard')">Scorecard</button>
+            </div>
+
+            <!-- Counter View -->
+            <div class="counter-view" id="counterView">
+                <div class="counter-hole-label">HOLE</div>
+                <div class="counter-hole-number" id="counterHoleNumber">1</div>
+                <div class="counter-bga-par">BGA Par</div>
+                <div class="counter-bga-value" id="counterBgaPar">5</div>
+                <div class="counter-strokes">
+                    <div class="counter-strokes-label">STROKES</div>
+                    <div class="counter-strokes-value" id="counterStrokesValue">0</div>
+                    <div class="counter-vs-bga" id="counterVsBga"></div>
+                </div>
+                <div class="counter-buttons">
+                    <button class="counter-btn minus" onclick="counterAdjust(-1)">-</button>
+                    <button class="counter-btn" onclick="counterAdjust(1)">+</button>
+                </div>
+                <div class="counter-nav">
+                    <button class="counter-nav-btn" id="counterPrev" onclick="counterNavigate(-1)">&larr; Prev</button>
+                    <div class="counter-dots" id="counterDots"></div>
+                    <button class="counter-nav-btn" id="counterNext" onclick="counterNavigate(1)">Next &rarr;</button>
+                </div>
+                <div class="counter-summary" id="counterSummary">
+                    <div class="counter-summary-stat">
+                        <div class="counter-summary-label">Strokes</div>
+                        <div class="counter-summary-value" id="counterTotalStrokes">-</div>
+                    </div>
+                    <div class="counter-summary-stat">
+                        <div class="counter-summary-label">vs BGA</div>
+                        <div class="counter-summary-value" id="counterTotalVsBga">-</div>
+                    </div>
+                    <div class="counter-summary-stat">
+                        <div class="counter-summary-label">Hole</div>
+                        <div class="counter-summary-value" id="counterProgress">1/18</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="scorecard-container" id="scorecardView">
                 <div class="scorecard-header">
                     <div class="scorecard-summary" id="scoreSummary">
                         <div style="display: flex; justify-content: space-around;">
@@ -222,6 +419,6 @@
         </div>
     </div>
 
-    <script src="script.js?v=2026-07-01-upper-unionville"></script>
+    <script src="script.js?v=2026-08-08-counter-view"></script>
 </body>
 </html>

@@ -1446,6 +1446,176 @@ function clearAllScores() {
     // Reset holes played counter
     document.getElementById('holesPlayed').textContent = '0/18';
     updateScoreSummary();
+
+    // Reset counter view
+    counterScores = {};
+    const { start } = getCounterHoles();
+    counterHole = start;
+    if (currentView === 'counter') renderCounter();
+}
+
+// Counter view state
+let counterHole = 1;
+let counterScores = {};
+let currentView = 'counter'; // 'counter' or 'scorecard'
+
+function switchView(view) {
+    currentView = view;
+    const counterView = document.getElementById('counterView');
+    const scorecardView = document.getElementById('scorecardView');
+    const counterBtn = document.getElementById('counterViewBtn');
+    const scorecardBtn = document.getElementById('scorecardViewBtn');
+
+    if (view === 'counter') {
+        counterView.style.display = 'block';
+        scorecardView.style.display = 'none';
+        counterBtn.classList.add('active');
+        scorecardBtn.classList.remove('active');
+        syncCounterFromScorecard();
+        renderCounter();
+    } else {
+        counterView.style.display = 'none';
+        scorecardView.style.display = 'block';
+        counterBtn.classList.remove('active');
+        scorecardBtn.classList.add('active');
+        syncScorecardFromCounter();
+    }
+}
+
+function syncCounterFromScorecard() {
+    if (!currentCourse) return;
+    const savedScores = JSON.parse(localStorage.getItem('bgaScores') || '{}');
+    counterScores = {};
+    const courseScores = savedScores[currentCourse] || {};
+    Object.keys(courseScores).forEach(h => {
+        counterScores[parseInt(h)] = courseScores[h];
+    });
+}
+
+function syncScorecardFromCounter() {
+    if (!currentCourse) return;
+    // Push counter scores into scorecard inputs
+    Object.keys(counterScores).forEach(h => {
+        const input = document.getElementById(`score-${h}`);
+        if (input && counterScores[h] > 0) {
+            input.value = counterScores[h];
+            const course = courses[currentCourse];
+            const bgaPar = course.par[h - 1] + 1;
+            updateHoleScore(parseInt(h), bgaPar);
+        }
+    });
+    updateScoreSummary();
+}
+
+function getCounterHoles() {
+    if (gameFormat === 'front9') return { start: 1, end: 9 };
+    if (gameFormat === 'back9') return { start: 10, end: 18 };
+    return { start: 1, end: 18 };
+}
+
+function renderCounter() {
+    if (!currentCourse) return;
+    const course = courses[currentCourse];
+    const bgaScores = calculateBogeyScores(course.par);
+    const { start, end } = getCounterHoles();
+    const totalHoles = end - start + 1;
+
+    const bgaPar = bgaScores[counterHole - 1];
+    const strokes = counterScores[counterHole] || 0;
+
+    document.getElementById('counterHoleNumber').textContent = counterHole;
+    document.getElementById('counterBgaPar').textContent = bgaPar;
+
+    const strokesEl = document.getElementById('counterStrokesValue');
+    strokesEl.textContent = strokes;
+    strokesEl.classList.remove('under', 'at', 'over');
+    if (strokes > 0) {
+        if (strokes < bgaPar) strokesEl.classList.add('under');
+        else if (strokes === bgaPar) strokesEl.classList.add('at');
+        else strokesEl.classList.add('over');
+    }
+
+    // vs BGA for this hole
+    const vsBgaEl = document.getElementById('counterVsBga');
+    if (strokes > 0) {
+        const diff = strokes - bgaPar;
+        vsBgaEl.textContent = diff > 0 ? `+${diff}` : diff === 0 ? 'Even' : `${diff}`;
+    } else {
+        vsBgaEl.textContent = '';
+    }
+
+    // Nav buttons
+    document.getElementById('counterPrev').disabled = (counterHole <= start);
+    document.getElementById('counterNext').disabled = (counterHole >= end);
+
+    // Dots
+    const dotsContainer = document.getElementById('counterDots');
+    dotsContainer.innerHTML = '';
+    for (let i = start; i <= end; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'counter-dot';
+        if (i === counterHole) dot.classList.add('current');
+        else if (counterScores[i] && counterScores[i] > 0) dot.classList.add('played');
+        dotsContainer.appendChild(dot);
+    }
+
+    // Summary
+    let totalStrokes = 0;
+    let totalBga = 0;
+    let holesPlayed = 0;
+    for (let i = start; i <= end; i++) {
+        totalBga += bgaScores[i - 1];
+        if (counterScores[i] && counterScores[i] > 0) {
+            totalStrokes += counterScores[i];
+            holesPlayed++;
+        }
+    }
+    document.getElementById('counterTotalStrokes').textContent = holesPlayed > 0 ? totalStrokes : '-';
+    document.getElementById('counterProgress').textContent = `${holesPlayed}/${totalHoles}`;
+
+    if (holesPlayed > 0) {
+        // vs BGA for played holes only
+        let playedBga = 0;
+        for (let i = start; i <= end; i++) {
+            if (counterScores[i] && counterScores[i] > 0) {
+                playedBga += bgaScores[i - 1];
+            }
+        }
+        const diff = totalStrokes - playedBga;
+        document.getElementById('counterTotalVsBga').textContent = diff > 0 ? `+${diff}` : diff === 0 ? 'E' : `${diff}`;
+    } else {
+        document.getElementById('counterTotalVsBga').textContent = '-';
+    }
+}
+
+function counterAdjust(delta) {
+    const current = counterScores[counterHole] || 0;
+    const newVal = current + delta;
+    if (newVal < 0) return;
+    counterScores[counterHole] = newVal;
+
+    // Save to localStorage so scorecard stays in sync
+    if (currentCourse) {
+        const savedScores = JSON.parse(localStorage.getItem('bgaScores') || '{}');
+        if (!savedScores[currentCourse]) savedScores[currentCourse] = {};
+        if (newVal > 0) {
+            savedScores[currentCourse][counterHole] = newVal;
+        } else {
+            delete savedScores[currentCourse][counterHole];
+        }
+        localStorage.setItem('bgaScores', JSON.stringify(savedScores));
+    }
+
+    renderCounter();
+}
+
+function counterNavigate(delta) {
+    const { start, end } = getCounterHoles();
+    const next = counterHole + delta;
+    if (next >= start && next <= end) {
+        counterHole = next;
+        renderCounter();
+    }
 }
 
 // Initialize the page
@@ -1482,6 +1652,11 @@ function init() {
         if (currentCourse) {
             gameFormat = document.getElementById('gameFormat').value;
             renderScorecard(currentCourse);
+            // Initialize counter view
+            const { start } = getCounterHoles();
+            counterHole = start;
+            syncCounterFromScorecard();
+            switchView('counter');
         }
     });
     
@@ -1490,6 +1665,10 @@ function init() {
     if (lastCourse && courses[lastCourse]) {
         courseSelect.value = lastCourse;
         renderScorecard(lastCourse);
+        const { start } = getCounterHoles();
+        counterHole = start;
+        syncCounterFromScorecard();
+        switchView('counter');
     }
 }
 
