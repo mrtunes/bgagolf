@@ -1942,20 +1942,24 @@ function init() {
     }
 }
 
-// GTA cities for region filtering
+// Region filtering for Canadian courses
+const TORONTO_CITIES = [
+    'Toronto', 'Scarborough', 'Etobicoke', 'North York'
+];
+
 const GTA_CITIES = [
-    'Toronto', 'Scarborough', 'Etobicoke', 'North York',
     'Mississauga', 'Brampton', 'Vaughan', 'Maple',
     'Richmond Hill', 'Markham', 'Pickering', 'Ajax',
     'Whitby', 'Oshawa', 'Oakville', 'Burlington',
     'Milton', 'Halton Hills', 'King City',
     'Stouffville', 'Aurora', 'Newmarket',
     'Caledon', 'Bolton', 'Kleinburg',
-    'Uxbridge', 'Tottenham'
+    'Uxbridge'
 ];
 
 function extractRegion(location) {
     const city = location.split(',')[0].trim();
+    if (TORONTO_CITIES.includes(city)) return 'Toronto';
     if (GTA_CITIES.includes(city)) return 'GTA';
     if (location.includes('ON,') || location.includes('Ontario')) return 'Ontario';
     return null;
