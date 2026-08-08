@@ -1258,6 +1258,102 @@ const courses = {
         "source": "golfpass.com",
         "url": "https://www.golfpass.com/travel-advisor/courses/27416-muskoka-bay-club",
         "course_type": "Resort Course"
+    },
+    "glen_abbey_golf_club": {
+        "name": "Glen Abbey Golf Club",
+        "location": "Oakville, ON, Canada",
+        "par": [
+            5, 4, 3, 4, 5, 4, 3, 4, 4,
+            4, 4, 3, 5, 4, 3, 5, 4, 5
+        ],
+        "yardage": [
+            502, 414, 156, 417, 527, 437, 197, 433, 458,
+            443, 452, 205, 558, 457, 141, 516, 436, 524
+        ],
+        "tee_info": "Black Tees",
+        "source": "golfpass.com",
+        "url": "https://www.golfpass.com/travel-advisor/courses/27695-glen-abbey-golf-club",
+        "course_type": "Championship Course"
+    },
+    "wyndance_golf_club": {
+        "name": "Wyndance Golf Club",
+        "location": "Uxbridge, ON, Canada",
+        "par": [
+            5, 4, 3, 4, 4, 4, 5, 3, 4,
+            4, 4, 3, 4, 5, 4, 4, 3, 5
+        ],
+        "yardage": [
+            596, 399, 257, 384, 436, 465, 563, 225, 415,
+            425, 355, 198, 435, 523, 481, 479, 252, 591
+        ],
+        "tee_info": "Black/Shark Tees",
+        "source": "golfpass.com",
+        "url": "https://www.golfpass.com/travel-advisor/courses/27959-wyndance-golf-club",
+        "course_type": "Championship Course"
+    },
+    "rattlesnake_point_copperhead": {
+        "name": "RattleSnake Point Golf Club - Copperhead",
+        "location": "Milton, ON, Canada",
+        "par": [
+            5, 4, 3, 5, 4, 4, 4, 3, 4,
+            5, 4, 4, 3, 4, 3, 5, 4, 4
+        ],
+        "yardage": [
+            520, 441, 176, 574, 427, 397, 441, 173, 477,
+            598, 415, 425, 203, 418, 181, 483, 442, 426
+        ],
+        "tee_info": "Gold Tees",
+        "source": "golfpass.com",
+        "url": "https://www.golfpass.com/travel-advisor/courses/27618-rattlesnake-point-golf-club-copperhead",
+        "course_type": "Championship Course"
+    },
+    "rattlesnake_point_sidewinder": {
+        "name": "RattleSnake Point Golf Club - Sidewinder",
+        "location": "Milton, ON, Canada",
+        "par": [
+            5, 3, 4, 4, 3, 5, 4, 4, 4,
+            4, 4, 5, 3, 4, 4, 3, 4, 5
+        ],
+        "yardage": [
+            510, 169, 364, 452, 195, 572, 441, 396, 428,
+            437, 344, 534, 215, 337, 458, 202, 467, 566
+        ],
+        "tee_info": "Gold Tees",
+        "source": "golfpass.com",
+        "url": "https://www.golfpass.com/travel-advisor/courses/27619-rattlesnake-point-golf-club-sidewinder",
+        "course_type": "Championship Course"
+    },
+    "king_valley_golf_club": {
+        "name": "King Valley Golf Club",
+        "location": "King City, ON, Canada",
+        "par": [
+            4, 3, 4, 4, 5, 4, 3, 5, 4,
+            4, 4, 3, 4, 5, 4, 3, 4, 5
+        ],
+        "yardage": [
+            414, 179, 411, 418, 519, 403, 200, 517, 438,
+            372, 350, 218, 433, 513, 440, 173, 425, 585
+        ],
+        "tee_info": "Lion Tees",
+        "source": "golfpass.com",
+        "url": "https://www.golfpass.com/travel-advisor/courses/27504-king-valley-golf-club",
+        "course_type": "Championship Course"
+    },
+    "greystone_golf_club": {
+        "name": "Greystone Golf Club",
+        "location": "Milton, ON, Canada",
+        "par": [
+            5, 3, 4, 5, 4, 3, 4, 4, 4,
+            5, 3, 4, 4, 3, 4, 4, 4, 5
+        ],
+        "yardage": [
+            515, 213, 435, 541, 430, 186, 436, 363, 404,
+            536, 189, 405, 409, 150, 301, 405, 417, 529
+        ],
+        "tee_info": "Gold Tees",
+        "source": "golfpass.com",
+        "url": "https://www.golfpass.com/travel-advisor/courses/27614-greystone-golf-club",
+        "course_type": "Championship Course"
     }
 };;;;;;;;;;;
 
